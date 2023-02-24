@@ -1,4 +1,5 @@
 .env
 node_modules/
-dist/
+electron_app/
 out/
+tmp/
