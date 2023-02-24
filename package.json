@@ -9,12 +9,13 @@
     "typescript": "^4.9.5"
   },
   "name": "openai-electron-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/index.js",
   "bin": {
     "openai-electron": "dist/index.js"
   },
   "description": "Command line tool to generate Electron application with OpenAI API",
+  "repository": "https://github.com/arisnacg/openai-electron.git",
   "license": "MIT",
   "dependencies": {
     "@types/inquirer": "^8.0.0",
