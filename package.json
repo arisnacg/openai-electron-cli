@@ -23,5 +23,13 @@
     "inquirer": "^8.0.0",
     "nanospinner": "^1.1.0",
     "openai": "^3.1.0"
-  }
+  },
+  "keywords": [
+    "cli",
+    "terminal",
+    "openai",
+    "ai",
+    "chatgpt",
+    "electron"
+  ]
 }
