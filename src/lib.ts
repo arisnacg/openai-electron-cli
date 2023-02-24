@@ -107,4 +107,20 @@ const exportSourceCode = async (outputPath: string, platform: string) => {
   }
 }
 
-export { installElectronDepencies, setPrompt, getPrompt, generateSourceCode, saveSourceCode, runSourceCode, exportSourceCode }
+const askPlatformQuestion = async (): Promise<string> => {
+  const answers: { platform: string } = await createPrompt([
+    {
+      type: "list",
+      name: "platform",
+      message: 'What is your platform?',
+      choices: [
+        'Linux',
+        'MacOS',
+        'Windows'
+      ]
+    }
+  ])
+  return answers.platform
+}
+
+export { installElectronDepencies, setPrompt, getPrompt, generateSourceCode, saveSourceCode, runSourceCode, exportSourceCode, askPlatformQuestion }

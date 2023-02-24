@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 import fs from "fs"
 import { Command } from "commander"
-import { exportSourceCode, generateSourceCode, getPrompt, installElectronDepencies, runSourceCode, saveSourceCode, setPrompt } from "./lib"
+import { askPlatformQuestion, exportSourceCode, generateSourceCode, getPrompt, installElectronDepencies, runSourceCode, saveSourceCode, setPrompt } from "./lib"
 import { createPrompt } from "./utils"
 
 const program = new Command()
@@ -73,25 +73,13 @@ interface CommandMakeOptions {
 
 // export the generated app
 program
-  .command("make")
-  .description("Make the generated electron app")
+  .command("export")
+  .description("Export the generated electron app")
   .requiredOption('-o, --output <path>', 'Path to store executable file')
   .action(async (options: CommandMakeOptions) => {
     if (fs.existsSync("prompt.txt")) {
       const { output } = options
-      const answers: { platform: string } = await createPrompt([
-        {
-          type: "list",
-          name: "platform",
-          message: 'What is your platform?',
-          choices: [
-            'Linux',
-            'MacOS',
-            'Windows'
-          ]
-        }
-      ])
-      const { platform } = answers
+      const platform = await askPlatformQuestion()
       exportSourceCode(output, platform)
     } else {
       console.error("🚨 Set the prompt first");
