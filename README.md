@@ -21,7 +21,7 @@ export PATH="/usr/local/share/npm/bin:/usr/local/bin:/usr/local/sbin:~/bin:$PATH
 You can install this project by using NPM
 
 ```bash
-npm install --global openai-electron
+npm install --global openai-electron-cli
 ```
 
 You can check if the project installed properly and the version of the project
