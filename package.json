@@ -1,8 +1,8 @@
 {
   "name": "openai-electron-cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Command line tool to generate Electron application with OpenAI API",
-  "repository": "https://github.com/arisnacg/openai-electron.git",
+  "repository": "https://github.com/arisnacg/openai-electron-cli.git",
   "scripts": {
     "start": "tsc && node dist/index.js",
     "build": "tsc"
