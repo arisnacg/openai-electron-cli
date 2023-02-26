@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createPrompt = exports.startSpinner = exports.createTextBox = exports.execCommand = void 0;
+exports.createPrompt = exports.startSpinner = exports.createTextBox = exports.spawnCommand = exports.execCommand = void 0;
 const cli_box_1 = __importDefault(require("cli-box"));
 const nanospinner_1 = require("nanospinner");
 const inquirer_1 = __importDefault(require("inquirer"));
@@ -29,6 +29,10 @@ const execCommand = (command, options) => {
     });
 };
 exports.execCommand = execCommand;
+const spawnCommand = (programName, options) => {
+    return (0, child_process_1.spawn)(programName, options, { stdio: "inherit" });
+};
+exports.spawnCommand = spawnCommand;
 const createTextBox = (text, width, height) => {
     const myBox = new cli_box_1.default({
         width,

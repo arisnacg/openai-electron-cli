@@ -1,7 +1,7 @@
 import Box from "cli-box"
 import { createSpinner, Spinner } from "nanospinner"
 import inquirer from "inquirer";
-import { exec, ExecOptions } from "child_process"
+import { exec, ExecOptions, spawn } from "child_process"
 
 const execCommand = (command: string, options?: ExecOptions): Promise<string | Buffer> => {
   return new Promise((resolve, reject) => {
@@ -11,6 +11,10 @@ const execCommand = (command: string, options?: ExecOptions): Promise<string | B
       resolve(stdout)
     })
   })
+}
+
+const spawnCommand = (programName: string, options: string[]) => {
+  return spawn(programName, options, { stdio: "inherit" })
 }
 
 const createTextBox = (text: string, width: number, height: number): string => {
@@ -41,4 +45,4 @@ const createPrompt = async (questions: inquirer.QuestionCollection<any>): Promis
 }
 
 
-export { execCommand, createTextBox, startSpinner, createPrompt }
+export { execCommand, spawnCommand, createTextBox, startSpinner, createPrompt }

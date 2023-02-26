@@ -1,1 +1,1 @@
-write a simple blog in HTML
+write a simple blog in HTML with CSS

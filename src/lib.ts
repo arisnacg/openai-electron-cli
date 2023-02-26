@@ -1,20 +1,24 @@
 import fs from "fs"
-import { execCommand, startSpinner, createTextBox, createPrompt } from "./utils"
+import http from "http"
+import { execCommand, startSpinner, createTextBox, createPrompt, spawnCommand } from "./utils"
 import { Configuration, OpenAIApi } from "openai"
-import { platformMap } from "./const"
+import { platformMap, ELECTRON_APP_DIR, PROMPT_PATH } from "./const"
 import path from "path"
+import { throws } from "assert"
+
 
 const installElectronDepencies = async () => {
 
-  const dir = "electron_app"
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
+  if (!fs.existsSync(ELECTRON_APP_DIR)) {
+    fs.mkdirSync(ELECTRON_APP_DIR);
   }
   const spinner = startSpinner("Install depedencies...").start()
   try {
-    await execCommand('electron-forge init', {
-      cwd: 'electron_app'
+    await execCommand('npx electron-forge init', {
+      cwd: ELECTRON_APP_DIR
     })
+    // delete .git folder of electron project
+    await execCommand(`rm -r .git`, { cwd: ELECTRON_APP_DIR })
     spinner.success({
       text: "Depedencies installed", mark: "✅"
     })
@@ -32,7 +36,7 @@ const installElectronDepencies = async () => {
 }
 
 const setPrompt = async (str: string) => {
-  const filePath = path.resolve("prompt.txt")
+  const filePath = path.resolve(PROMPT_PATH)
   try {
     fs.writeFileSync(filePath, str);
   } catch (err) {
@@ -42,7 +46,7 @@ const setPrompt = async (str: string) => {
 
 const getPrompt = (): string => {
   try {
-    return fs.readFileSync("prompt.txt").toString()
+    return fs.readFileSync(PROMPT_PATH).toString()
   } catch (err) {
     throw err
   }
@@ -77,15 +81,37 @@ const generateSourceCode = async (prompt: string, openaiKey: string): Promise<st
 const saveSourceCode = (sourceCode: string | undefined) => {
   const spinner2 = startSpinner("Saving source code...").start()
   if (sourceCode) {
-    const electronIndexHtmlPath = `electron_app/src/index.html`
+    const electronIndexHtmlPath = `${ELECTRON_APP_DIR}/src/index.html`
     fs.writeFileSync(electronIndexHtmlPath, sourceCode);
   }
   spinner2.success({ text: "Source code saved and application is ready to run", mark: "✅" })
 }
 
+const editSourceCode = (textEditor: string) => {
+  if (!textEditor)
+    textEditor = "vim"
+  spawnCommand(textEditor, [`${ELECTRON_APP_DIR}/src/index.html`])
+}
+
 const runSourceCode = async () => {
-  return await execCommand('electron-forge start', {
-    cwd: './electron_app'
+  try {
+
+    await execCommand('npx electron-forge start', {
+      cwd: ELECTRON_APP_DIR
+    })
+  } catch (err) {
+    console.log(`🚨 Application get terminated`)
+  }
+}
+
+const runSourceCodeWebServer = async () => {
+  const server = http.createServer((req, res) => {
+    const htmlText = fs.readFileSync(ELECTRON_APP_DIR + "/src/index.html")
+    res.writeHead(200);
+    res.end(htmlText);
+  })
+  server.listen(5000, () => {
+    console.log(createTextBox(`Application run on http://localhost:5000`, 50, 3))
   })
 }
 
@@ -93,12 +119,12 @@ const exportSourceCode = async (outputPath: string, platform: string) => {
   const spinner = startSpinner(`Making the application for ${platform} (${platformMap.get(String(platform))})`)
     .update({ color: "green" })
     .start()
-  const command = `electron-forge make --platform=${platformMap.get(String(platform))}`
+  const command = `npx electron-forge make --platform=${platformMap.get(String(platform))}`
   try {
     await execCommand(command, {
-      cwd: './electron_app'
+      cwd: ELECTRON_APP_DIR
     })
-    await execCommand(`cp -r electron_app/out ${outputPath}`)
+    await execCommand(`cp -r ${ELECTRON_APP_DIR}/out ${outputPath}`)
     spinner.success({ text: "Application packaged successfully", mark: "✅" })
   } catch (err) {
     if (err instanceof Error) {
@@ -123,4 +149,15 @@ const askPlatformQuestion = async (): Promise<string> => {
   return answers.platform
 }
 
-export { installElectronDepencies, setPrompt, getPrompt, generateSourceCode, saveSourceCode, runSourceCode, exportSourceCode, askPlatformQuestion }
+export {
+  installElectronDepencies,
+  setPrompt,
+  getPrompt,
+  generateSourceCode,
+  saveSourceCode,
+  editSourceCode,
+  runSourceCode,
+  runSourceCodeWebServer,
+  exportSourceCode,
+  askPlatformQuestion
+}

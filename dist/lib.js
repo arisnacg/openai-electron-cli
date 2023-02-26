@@ -12,22 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.askPlatformQuestion = exports.exportSourceCode = exports.runSourceCode = exports.saveSourceCode = exports.generateSourceCode = exports.getPrompt = exports.setPrompt = exports.installElectronDepencies = void 0;
+exports.askPlatformQuestion = exports.exportSourceCode = exports.runSourceCodeWebServer = exports.runSourceCode = exports.editSourceCode = exports.saveSourceCode = exports.generateSourceCode = exports.getPrompt = exports.setPrompt = exports.installElectronDepencies = void 0;
 const fs_1 = __importDefault(require("fs"));
+const http_1 = __importDefault(require("http"));
 const utils_1 = require("./utils");
 const openai_1 = require("openai");
 const const_1 = require("./const");
 const path_1 = __importDefault(require("path"));
 const installElectronDepencies = () => __awaiter(void 0, void 0, void 0, function* () {
-    const dir = "electron_app";
-    if (!fs_1.default.existsSync(dir)) {
-        fs_1.default.mkdirSync(dir);
+    if (!fs_1.default.existsSync(const_1.ELECTRON_APP_DIR)) {
+        fs_1.default.mkdirSync(const_1.ELECTRON_APP_DIR);
     }
     const spinner = (0, utils_1.startSpinner)("Install depedencies...").start();
     try {
-        yield (0, utils_1.execCommand)('electron-forge init', {
-            cwd: 'electron_app'
+        yield (0, utils_1.execCommand)('npx electron-forge init', {
+            cwd: const_1.ELECTRON_APP_DIR
         });
+        // delete .git folder of electron project
+        yield (0, utils_1.execCommand)(`rm -r .git`, { cwd: const_1.ELECTRON_APP_DIR });
         spinner.success({
             text: "Depedencies installed", mark: "✅"
         });
@@ -46,7 +48,7 @@ const installElectronDepencies = () => __awaiter(void 0, void 0, void 0, functio
 });
 exports.installElectronDepencies = installElectronDepencies;
 const setPrompt = (str) => __awaiter(void 0, void 0, void 0, function* () {
-    const filePath = path_1.default.resolve("prompt.txt");
+    const filePath = path_1.default.resolve(const_1.PROMPT_PATH);
     try {
         fs_1.default.writeFileSync(filePath, str);
     }
@@ -57,7 +59,7 @@ const setPrompt = (str) => __awaiter(void 0, void 0, void 0, function* () {
 exports.setPrompt = setPrompt;
 const getPrompt = () => {
     try {
-        return fs_1.default.readFileSync("prompt.txt").toString();
+        return fs_1.default.readFileSync(const_1.PROMPT_PATH).toString();
     }
     catch (err) {
         throw err;
@@ -95,28 +97,50 @@ exports.generateSourceCode = generateSourceCode;
 const saveSourceCode = (sourceCode) => {
     const spinner2 = (0, utils_1.startSpinner)("Saving source code...").start();
     if (sourceCode) {
-        const electronIndexHtmlPath = `electron_app/src/index.html`;
+        const electronIndexHtmlPath = `${const_1.ELECTRON_APP_DIR}/src/index.html`;
         fs_1.default.writeFileSync(electronIndexHtmlPath, sourceCode);
     }
     spinner2.success({ text: "Source code saved and application is ready to run", mark: "✅" });
 };
 exports.saveSourceCode = saveSourceCode;
+const editSourceCode = (textEditor) => {
+    if (!textEditor)
+        textEditor = "vim";
+    (0, utils_1.spawnCommand)(textEditor, [`${const_1.ELECTRON_APP_DIR}/src/index.html`]);
+};
+exports.editSourceCode = editSourceCode;
 const runSourceCode = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield (0, utils_1.execCommand)('electron-forge start', {
-        cwd: './electron_app'
-    });
+    try {
+        yield (0, utils_1.execCommand)('npx electron-forge start', {
+            cwd: const_1.ELECTRON_APP_DIR
+        });
+    }
+    catch (err) {
+        console.log(`🚨 Application get terminated`);
+    }
 });
 exports.runSourceCode = runSourceCode;
+const runSourceCodeWebServer = () => __awaiter(void 0, void 0, void 0, function* () {
+    const server = http_1.default.createServer((req, res) => {
+        const htmlText = fs_1.default.readFileSync(const_1.ELECTRON_APP_DIR + "/src/index.html");
+        res.writeHead(200);
+        res.end(htmlText);
+    });
+    server.listen(5000, () => {
+        console.log((0, utils_1.createTextBox)(`Application run on http://localhost:5000`, 50, 3));
+    });
+});
+exports.runSourceCodeWebServer = runSourceCodeWebServer;
 const exportSourceCode = (outputPath, platform) => __awaiter(void 0, void 0, void 0, function* () {
     const spinner = (0, utils_1.startSpinner)(`Making the application for ${platform} (${const_1.platformMap.get(String(platform))})`)
         .update({ color: "green" })
         .start();
-    const command = `electron-forge make --platform=${const_1.platformMap.get(String(platform))}`;
+    const command = `npx electron-forge make --platform=${const_1.platformMap.get(String(platform))}`;
     try {
         yield (0, utils_1.execCommand)(command, {
-            cwd: './electron_app'
+            cwd: const_1.ELECTRON_APP_DIR
         });
-        yield (0, utils_1.execCommand)(`cp -r electron_app/out ${outputPath}`);
+        yield (0, utils_1.execCommand)(`cp -r ${const_1.ELECTRON_APP_DIR}/out ${outputPath}`);
         spinner.success({ text: "Application packaged successfully", mark: "✅" });
     }
     catch (err) {

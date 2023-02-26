@@ -1,14 +1,24 @@
 #! /usr/bin/env node
 import fs from "fs"
 import { Command } from "commander"
-import { askPlatformQuestion, exportSourceCode, generateSourceCode, getPrompt, installElectronDepencies, runSourceCode, saveSourceCode, setPrompt } from "./lib"
-import { createPrompt } from "./utils"
+import {
+  askPlatformQuestion,
+  editSourceCode,
+  exportSourceCode,
+  generateSourceCode,
+  getPrompt,
+  installElectronDepencies,
+  runSourceCode,
+  runSourceCodeWebServer,
+  saveSourceCode,
+  setPrompt
+} from "./lib"
 
 const program = new Command()
 program
   .name("OpenAI Electron CLI")
   .description(`OpenAI Electron Generator Command Line Tool`)
-  .version("1.0.3")
+  .version("1.1.0")
 
 // install electron depedencies
 program
@@ -22,7 +32,8 @@ program
 program
   .command("set-prompt")
   .description("Set prompt for OpenAI")
-  .argument("<string>", "OpenAI prompt string")
+  .argument("<string>",
+    "OpenAI prompt string")
   .action((str: string) => {
     if (!str) {
       console.error("🚨 Prompt is not allowed to be empty");
@@ -59,6 +70,18 @@ program.command("generate-code")
     saveSourceCode(sourceCode)
   });
 
+interface commandEditSourceCodeOptions {
+  textEditor: string
+}
+
+// edit the generated source code
+program.command("edit-code")
+  .description("Edit generated code from OpenAI")
+  .option("-T, --text-editor <text-editor>, text editor program (default: vim)")
+  .action(async (options: commandEditSourceCodeOptions) => {
+    editSourceCode(options.textEditor)
+  });
+
 // run the generated app
 program
   .command("run")
@@ -66,6 +89,15 @@ program
   .action(() => {
     runSourceCode()
   });
+
+// run the generated app on web browser
+program
+  .command("run-webserver")
+  .description("Run the generated electron app")
+  .action(() => {
+    runSourceCodeWebServer()
+  });
+
 
 interface CommandMakeOptions {
   output: string
@@ -77,14 +109,9 @@ program
   .description("Export the generated electron app")
   .requiredOption('-o, --output <path>', 'Path to store executable file')
   .action(async (options: CommandMakeOptions) => {
-    if (fs.existsSync("prompt.txt")) {
-      const { output } = options
-      const platform = await askPlatformQuestion()
-      exportSourceCode(output, platform)
-    } else {
-      console.error("🚨 Set the prompt first");
-      process.exit(1);
-    }
+    const { output } = options
+    const platform = await askPlatformQuestion()
+    exportSourceCode(output, platform)
   });
 
 program.parse()

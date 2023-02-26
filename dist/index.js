@@ -20,7 +20,7 @@ const program = new commander_1.Command();
 program
     .name("OpenAI Electron CLI")
     .description(`OpenAI Electron Generator Command Line Tool`)
-    .version("1.0.2");
+    .version("1.1.0");
 // install electron depedencies
 program
     .command("install")
@@ -62,6 +62,13 @@ program.command("generate-code")
     const sourceCode = yield (0, lib_1.generateSourceCode)((0, lib_1.getPrompt)(), openaiKey).catch(err => { throw err; });
     (0, lib_1.saveSourceCode)(sourceCode);
 }));
+// edit the generated source code
+program.command("edit-code")
+    .description("Edit generated code from OpenAI")
+    .option("-T, --text-editor <text-editor>, text editor program (default: vim)")
+    .action((options) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, lib_1.editSourceCode)(options.textEditor);
+}));
 // run the generated app
 program
     .command("run")
@@ -69,21 +76,22 @@ program
     .action(() => {
     (0, lib_1.runSourceCode)();
 });
+// run the generated app on web browser
+program
+    .command("run-webserver")
+    .description("Run the generated electron app")
+    .action(() => {
+    (0, lib_1.runSourceCodeWebServer)();
+});
 // export the generated app
 program
     .command("export")
     .description("Export the generated electron app")
     .requiredOption('-o, --output <path>', 'Path to store executable file')
     .action((options) => __awaiter(void 0, void 0, void 0, function* () {
-    if (fs_1.default.existsSync("prompt.txt")) {
-        const { output } = options;
-        const platform = yield (0, lib_1.askPlatformQuestion)();
-        (0, lib_1.exportSourceCode)(output, platform);
-    }
-    else {
-        console.error("🚨 Set the prompt first");
-        process.exit(1);
-    }
+    const { output } = options;
+    const platform = yield (0, lib_1.askPlatformQuestion)();
+    (0, lib_1.exportSourceCode)(output, platform);
 }));
 program.parse();
 //# sourceMappingURL=index.js.map
