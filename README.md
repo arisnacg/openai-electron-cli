@@ -71,6 +71,7 @@ openai-electron edit-code --text-editor vim
 ### `run`
 
 Run the generated source code as desktop application via `electron`
+
 ![Electron App](images/electron_app.jpg)
 
 ### `run-webserver`
