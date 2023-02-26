@@ -24,14 +24,14 @@ program
 // install electron depedencies
 program
     .command("install")
-    .description("Install electron depedencies")
+    .description("install electron depedencies")
     .action(() => {
     (0, lib_1.installElectronDepencies)();
 });
 // set the prompt from user input
 program
     .command("set-prompt")
-    .description("Set prompt for OpenAI")
+    .description("set prompt for OpenAI")
     .argument("<string>", "OpenAI prompt string")
     .action((str) => {
     if (!str) {
@@ -43,7 +43,7 @@ program
 // read the prompt from user
 program
     .command("get-prompt")
-    .description("Get the prompt that setted for OpenAI")
+    .description("get the prompt that setted for OpenAI")
     .action(() => {
     if (fs_1.default.existsSync("prompt.txt")) {
         console.log((0, lib_1.getPrompt)());
@@ -55,7 +55,7 @@ program
 });
 // generate code using openai API
 program.command("generate-code")
-    .description("Get generated code from OpenAI using the prompt")
+    .description("get generated code from OpenAI using the prompt")
     .requiredOption("--openai-key <api-key>, OpenAI API key")
     .action((options) => __awaiter(void 0, void 0, void 0, function* () {
     const { openaiKey } = options;
@@ -64,7 +64,7 @@ program.command("generate-code")
 }));
 // edit the generated source code
 program.command("edit-code")
-    .description("Edit generated code from OpenAI")
+    .description("edit generated code from OpenAI")
     .option("-T, --text-editor <text-editor>, text editor program (default: vim)")
     .action((options) => __awaiter(void 0, void 0, void 0, function* () {
     (0, lib_1.editSourceCode)(options.textEditor);
@@ -72,21 +72,21 @@ program.command("edit-code")
 // run the generated app
 program
     .command("run")
-    .description("Run the generated electron app")
+    .description("run the generated source code as desktop app")
     .action(() => {
     (0, lib_1.runSourceCode)();
 });
 // run the generated app on web browser
 program
     .command("run-webserver")
-    .description("Run the generated electron app")
+    .description("run the generated source code as web app")
     .action(() => {
     (0, lib_1.runSourceCodeWebServer)();
 });
 // export the generated app
 program
     .command("export")
-    .description("Export the generated electron app")
+    .description("export the generated electron app")
     .requiredOption('-o, --output <path>', 'Path to store executable file')
     .action((options) => __awaiter(void 0, void 0, void 0, function* () {
     const { output } = options;

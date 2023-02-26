@@ -7,6 +7,8 @@
 
 Command line tool to generate Electron application with OpenAI API
 
+![Demo](images/demo.gif)
+
 ## Installation
 
 You can install this project by using NPM

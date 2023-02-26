@@ -29,7 +29,7 @@ const installElectronDepencies = () => __awaiter(void 0, void 0, void 0, functio
             cwd: const_1.ELECTRON_APP_DIR
         });
         // delete .git folder of electron project
-        yield (0, utils_1.execCommand)(`rm -r .git`, { cwd: const_1.ELECTRON_APP_DIR });
+        // await execCommand(`rm -r .git`, { cwd: ELECTRON_APP_DIR })
         spinner.success({
             text: "Depedencies installed", mark: "✅"
         });

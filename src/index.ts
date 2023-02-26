@@ -18,7 +18,7 @@ const program = new Command()
 program
   .name("OpenAI Electron CLI")
   .description(`OpenAI Electron Generator Command Line Tool`)
-  .version("1.1.0")
+  .version("1.1.1")
 
 // install electron depedencies
 program
