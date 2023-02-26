@@ -18,7 +18,7 @@ const installElectronDepencies = async () => {
       cwd: ELECTRON_APP_DIR
     })
     // delete .git folder of electron project
-    await execCommand(`rm -r .git`, { cwd: ELECTRON_APP_DIR })
+    // await execCommand(`rm -r .git`, { cwd: ELECTRON_APP_DIR })
     spinner.success({
       text: "Depedencies installed", mark: "✅"
     })
