@@ -27,6 +27,27 @@ You can see all the avaiable commands
 openai-electron -H
 ```
 
+### Windows User Issue
+
+If you are Windows user and get error like this:
+
+```
+openai-electron : File C:\Users\xxxx\AppData\Roaming\npm\openai-electron.ps1 cannot be loaded because running scripts
+is disabled on this system. For more information, see about_Execution_Policies at
+https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ openai-electron
++ ~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+```
+
+You can fix it by running this command (**it may cause a security issue**)
+
+```
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
+```
+
 ## Command Usage
 
 ### `install`
@@ -35,7 +56,11 @@ Installing all electron depencies that needed to run an Electron application
 
 ### `set-prompt`
 
-Set the prompt that will send to OpenAI to generate the source code
+Set the prompt that will send to OpenAI to generate the source code. Example:
+
+```bash
+openai-electron set-prompt "write a simple blog in HTML with CSS"
+```
 
 ### `get-prompt`
 

@@ -23,7 +23,7 @@ program
 // install electron depedencies
 program
   .command("install")
-  .description("Install electron depedencies")
+  .description("install electron depedencies")
   .action(() => {
     installElectronDepencies()
   });
@@ -31,7 +31,7 @@ program
 // set the prompt from user input
 program
   .command("set-prompt")
-  .description("Set prompt for OpenAI")
+  .description("set prompt for OpenAI")
   .argument("<string>",
     "OpenAI prompt string")
   .action((str: string) => {
@@ -45,7 +45,7 @@ program
 // read the prompt from user
 program
   .command("get-prompt")
-  .description("Get the prompt that setted for OpenAI")
+  .description("get the prompt that setted for OpenAI")
   .action(() => {
     if (fs.existsSync("prompt.txt")) {
       console.log(getPrompt())
@@ -62,7 +62,7 @@ interface commandGenerateCodeOptions {
 
 // generate code using openai API
 program.command("generate-code")
-  .description("Get generated code from OpenAI using the prompt")
+  .description("get generated code from OpenAI using the prompt")
   .requiredOption("--openai-key <api-key>, OpenAI API key")
   .action(async (options: commandGenerateCodeOptions) => {
     const { openaiKey } = options
@@ -76,7 +76,7 @@ interface commandEditSourceCodeOptions {
 
 // edit the generated source code
 program.command("edit-code")
-  .description("Edit generated code from OpenAI")
+  .description("edit generated code from OpenAI")
   .option("-T, --text-editor <text-editor>, text editor program (default: vim)")
   .action(async (options: commandEditSourceCodeOptions) => {
     editSourceCode(options.textEditor)
@@ -85,7 +85,7 @@ program.command("edit-code")
 // run the generated app
 program
   .command("run")
-  .description("Run the generated electron app")
+  .description("run the generated source code as desktop app")
   .action(() => {
     runSourceCode()
   });
@@ -93,7 +93,7 @@ program
 // run the generated app on web browser
 program
   .command("run-webserver")
-  .description("Run the generated electron app")
+  .description("run the generated source code as web app")
   .action(() => {
     runSourceCodeWebServer()
   });
@@ -106,7 +106,7 @@ interface CommandMakeOptions {
 // export the generated app
 program
   .command("export")
-  .description("Export the generated electron app")
+  .description("export the generated electron app")
   .requiredOption('-o, --output <path>', 'Path to store executable file')
   .action(async (options: CommandMakeOptions) => {
     const { output } = options
